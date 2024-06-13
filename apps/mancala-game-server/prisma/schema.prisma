@@ -1,0 +1,49 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Player {
+  createdAt   DateTime @default(now())
+  currentGame String?
+  id          String   @id @default(cuid())
+  moves       Move[]
+  playerName  String?
+  score       Int?
+  updatedAt   DateTime @updatedAt
+}
+
+model Game {
+  createdAt     DateTime @default(now())
+  currentPlayer Int?
+  id            String   @id @default(cuid())
+  pits          Pit[]
+  status        String?
+  updatedAt     DateTime @updatedAt
+}
+
+model Pit {
+  createdAt DateTime @default(now())
+  game      Game?    @relation(fields: [gameId], references: [id])
+  gameId    String?
+  id        String   @id @default(cuid())
+  moves     Move[]
+  pitIndex  Int?
+  stones    Int?
+  updatedAt DateTime @updatedAt
+}
+
+model Move {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  pit       Pit?      @relation(fields: [pitId], references: [id])
+  pitId     String?
+  player    Player?   @relation(fields: [playerId], references: [id])
+  playerId  String?
+  timestamp DateTime?
+  updatedAt DateTime  @updatedAt
+}
